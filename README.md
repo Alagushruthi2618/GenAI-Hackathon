@@ -1,5 +1,5 @@
-**"Inclusive and Participatory design oriented tool to sustain STEAM education".  
-Here is the overview**
+**"Inclusive and Participatory design oriented tool to sustain STEAM education".  Here is the overview**
+
 •	The tool is hyper-personalised based on the learners Intelligence type (There are a total of 8 intelligence types - Howard Gardner's Theory of Multiple Intelligences)
 
 •	Once the intelligence type is identified the learner has to upload their subject material (text book, handwritten notes, sample question paper, other relevant materials)
@@ -10,3 +10,27 @@ Here is the overview**
 
 •	Intends to develop a healthy and sustained curiosity for STEAM subjects among girls/women by integrating women with noteworthy contributions to society as role models in the narrative (Nobel prize, Lasker award etc.)
 
+
+**Setup instructions (step-by-step)**
+
+
+**Dependencies list**
+
+
+**Usage Examples**
+
+
+**Screenshots or GIFs of the app in action**
+
+
+**Team member details**
+
+•	Kralagushruthi@gmail.com
+
+•	diyaetony@gmail.com
+
+•	nikhitha0920@gmail.com
+
+•	sajalsharma0803@gmail.com
+
+•	venkatesh14518@gmail.com
