@@ -10,3 +10,4 @@ Here is the overview
 •	The tool also creates assessments to ensure spaced repetition based on scoring patterns, forgetting curve, and aims to be scaled up (beyond 15 year olds at both ends of the spectrum) based on John Piaget's theory of cognitive development
 
 •	Intends to develop a healthy and sustained curiosity for STEAM subjects among girls/women by integrating women with noteworthy contributions to society as role models in the narrative (Nobel prize, Lasker award etc.)
+
