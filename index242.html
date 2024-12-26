@@ -1,107 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EMBRACE</title>
-  <link rel="stylesheet" href="style24.css">
-  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMBRACE</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style24.css') }}">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 <body>
-  <!-- Login Form -->
-  <div class="wrapper" id="Login">
-    <form action="">
-      <h1>Sign In</h1>
-      <div class="profile-photo">
-        <img id="profilePhoto" src="" alt="Profile Photo" style="display: none; width: 100px; height: 100px; border-radius: 150%; margin-left: 100px;margin-top: 50px;">
-      </div>
-      <div class="input-box">
-        <input type="text" placeholder="Username" required>
-        <i class='bx bxs-user'></i>
-      </div>
-      <div class="input-box">
-        <input type="password" placeholder="Password" required>
-        <i class='bx bxs-lock-alt'></i>
-      </div>
-      <div class="remember-forgot">
-        <label><input type="checkbox">Remember Me</label>
-        <a href="#">Forgot Password</a>
-      </div>
-      <button type="submit" class="btn">Login</button>
-      <div class="register-link">
-        <p>Don't have an account? <a href="#" id="RegisterButton">Register</a></p>
-      </div>
-    </form>
-  </div>
+    <!-- Login Form -->
+    <div class="wrapper" id="Login">
+        <form action="{{ url_for('login') }}" method="POST">
+            <h1>Sign In</h1>
+            <div class="profile-photo">
+                <img id="profilePhoto" src="" alt="Profile Photo" style="display: none; width: 100px; height: 100px; border-radius: 150%; margin-left: 100px;margin-top: 50px;">
+            </div>
+            <div class="input-box">
+                <input type="text" name="username" placeholder="Username" required>
+                <i class='bx bxs-user'></i>
+            </div>
+            <div class="input-box">
+                <input type="password" name="password" placeholder="Password" required>
+                <i class='bx bxs-lock-alt'></i>
+            </div>
+            <div class="remember-forgot">
+                <label><input type="checkbox">Remember Me</label>
+                <a href="#">Forgot Password</a>
+            </div>
+            <button type="submit" class="btn">Login</button>
+            <div class="register-link">
+                <p>Don't have an account? <a href="#" id="RegisterButton">Register</a></p>
+            </div>
+        </form>
+    </div>
 
-  <!-- Registration Form -->
-  <div class="container" id="Register" style="display: none;">
-    <h1 class="form-title">Register</h1>
-    <form method="post" action="" enctype="multipart/form-data" id="registrationForm">
-      <div class="input-group">
-        <i class="bx bxs-user"></i>
-        <input type="text" name="fName" id="fName" placeholder="First Name" required>
-      </div>
-      <div class="input-group">
-        <i class="bx bxs-user"></i>
-        <input type="text" name="lName" id="lName" placeholder="Last Name" required>
-      </div>
-      <div class="input-group">
-        <i class="bx bxs-calendar"></i>
-        <select name="number" id="Age" required>
-            <option value="" disabled selected>Select Age</option>
-            <option value="13">13</option>
-            <option value="14">14</option>
-            <option value="15">15</option>
-            <option value="16">16</option>
-            <option value="17">17</option>
-          </select>
-        </div>
-       
-      <div class="input-group">
-        <i class="bx bxs-school"></i>
-        <select name="number" id="class" required>
-            <option value="" disabled selected>Select Class</option>
-            <option value="10">10</option>
-            <option value="9">9</option>
-          </select>
-        </div>
-      <div class="input-group">
-        <i class="bx bxs-group"></i>
-        <select name="Gender" id="Gender" required>
-          <option value="" disabled selected>Select Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-        </select>
-      </div>
-      <div class="input-group">
-        <i class="bx bxs-envelope"></i>
-        <input type="email" name="email" id="email" placeholder="Email" required>
-      </div>
-      <div class="input-group">
-        <i class="bx bxs-user"></i>
-        <input type="text" name="username" id="username" placeholder="Username" required>
-      </div>
-      <div class="input-group">
-        <i class="bx bxs-lock-alt"></i>
-        <input type="password" name="password" id="password" placeholder="Password" required>
-      </div>
-      <div class="input-group">
-        <label for="profileImage">Upload Passport size image</label>
-        <i class="bx bxs-image-add"></i>
-        <input type="file" name="profileImage" id="profileImage" accept="image/*" required>
-      </div>
-      <div class="input-group">
-        <label for="fullImage">Upload full length image</label>
-        <i class="bx bxs-image-add"></i>
-        <input type="file" name="fullImage" id="fullImage" accept="image/*">
-      </div>
-      <button type="submit" class="btn">Register</button>
-      <div class="login-link">
-        <p>Already have an account? <a href="#" id="SignInButton">Sign In</a></p>
-      </div>
-    </form>
-  </div>
-  <script src="script.js"></script>
+    <!-- Registration Form -->
+    <div class="container" id="Register" style="display: none;">
+        <h1 class="form-title">Register</h1>
+        <form action="{{ url_for('register') }}" method="POST" enctype="multipart/form-data" id="registrationForm">
+            <div class="input-group">
+                <i class="bx bxs-user"></i>
+                <input type="text" name="fName" id="fName" placeholder="First Name" required>
+            </div>
+            <div class="input-group">
+                <i class="bx bxs-user"></i>
+                <input type="text" name="lName" id="lName" placeholder="Last Name" required>
+            </div>
+            <div class="input-group">
+                <i class="bx bxs-calendar"></i>
+                <select name="Age" id="Age" required>
+                    <option value="" disabled selected>Select Age</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <i class="bx bxs-school"></i>
+                <select name="class" id="class" required>
+                    <option value="" disabled selected>Select Class</option>
+                    <option value="10">10</option>
+                    <option value="9">9</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <i class="bx bxs-group"></i>
+                <select name="Gender" id="Gender" required>
+                    <option value="" disabled selected>Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <i class="bx bxs-envelope"></i>
+                <input type="email" name="email" id="email" placeholder="Email" required>
+            </div>
+            <div class="input-group">
+                <i class="bx bxs-user"></i>
+                <input type="text" name="username" id="username" placeholder="Username" required>
+            </div>
+            <div class="input-group">
+                <i class="bx bxs-lock-alt"></i>
+                <input type="password" name="password" id="password" placeholder="Password" required>
+            </div>
+            <div class="input-group">
+                <label for="profileImage">Upload Passport size image</label>
+                <i class="bx bxs-image-add"></i>
+                <input type="file" name="profileImage" id="profileImage" accept="image/*" required>
+            </div>
+            <div class="input-group">
+                <label for="fullImage">Upload full length image</label>
+                <i class="bx bxs-image-add"></i>
+                <input type="file" name="fullImage" id="fullImage" accept="image/*">
+            </div>
+            <button type="submit" class="btn">Register</button>
+            <div class="login-link">
+                <p>Already have an account? <a href="#" id="SignInButton">Sign In</a></p>
+            </div>
+        </form>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
