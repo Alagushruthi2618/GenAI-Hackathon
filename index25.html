@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EMBRACE</title>
+  <link rel="stylesheet" href="style25.css">
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+</head>
+<body>
+    <main class="main">
+        <header class="header">
+        
+            <a href="#" class="logo">
+                <div class="logo-container">
+                    <img src="logo embrace.png" alt="EMBRACE Logo" class="logo-image">
+                    <span class="logo-text">EMBRACE</span>
+                </div>
+            </a>
+            <nav>
+                <a href="">Home</a>
+                <a href="">Student </a>
+                <a href="">History </a>
+                    
+                    
+            </nav>
+                
+            
+
+            
+        </header>
+        
+    <div class="container">
+            <h1>Choose the subject</h1>
+            <h2 class="container-text"></h2>
+            <div class="input-group">
+                <i class='bx bx-book'></i>
+                <select name="text" id="subject" required>
+                    <option value="" disabled selected>Select subject</option>
+                    <option value="Chemistry">Chemistry</option>
+                    <option value="others">Others</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="container" id="date-container" style="display: none;">
+            <h1>Choose the date</h1>
+            <h2 class="container-text"></h2>
+            <div class="input-group">
+                <i class='bx bx-calendar'></i> <!-- Calendar icon -->
+                <input type="date" id="date" name="date" required>
+                <select name="text" id="subject" required>
+                    <option value="" disabled selected>Select Date</option>
+                    <option value="Day 1">Day1</option>
+                    <option value="Day 2">Day 2</option>
+                    
+                  </select>
+            </div>
+        </div>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        
+        
+            
+        <div class="containerr" id="upload-container" style="display: none;">
+            <h1>Upload study materials</h1>
+            <p1>Please upload your study materials here,
+                 <br>and I'll create a comic based on the notes for a joyful learning experience!</p1>
+            <h2 class="container-textt"></h2>
+            <div class="input-groupp">
+                <i class='bx bx-image'></i> <!-- Image icon -->
+                <input type="file" id="image-upload" name="image" accept="image/*">
+            </div>
+            <img id="uploaded-image" style="display: none; max-width: 100%; margin-top: 10px;" alt="Uploaded Image">
+        </div>
+       
+        
+                
+
+
+
+
+
+
+ <script src="script25.js"></script>
+</body>  
+</html>  
