@@ -11,7 +11,7 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background:url(3838986-Photoroom.png) no-repeat;
+    background:url(3838986-Photoroom-Photoroom.png) no-repeat;
     background-size: cover;
     background-position: center;
   }
@@ -57,14 +57,14 @@
 
 /* Styling for the text inside the image */
 .logo-text {
-    margin-left: 3px;
+    margin-left: 2px;
     position: absolute;
-    bottom: -16px; /* Position the text 10px from the bottom of the image */
+    bottom: -25px; /* Position the text 10px from the bottom of the image */
     left: 50%;
     transform: translateX(-50%);
     color:rgba(98,3,59);
     font-family:'Times New Roman', Times, serif;
-    font-size: 30px;
+    font-size: 35px;
     font-weight: bold;
     text-transform: uppercase;
     background: transparent; /* Optional semi-transparent background for better readability */
@@ -75,12 +75,43 @@
 
 header a{
     color:#8c0505;
-    margin-right: 10px;
+    margin-right: 50px;
     font-family: 'Times New Roman', Times, serif;
     margin-top: 0px;
     font-size: 30px;
     
 }
+/* Navigation Bar Styles */
+nav {
+    margin-top: -100px;
+    display: flex; /* Align links horizontally */
+    align-items: center; /* Center align links vertically */
+    justify-content: flex-end; /* Align links to the right */
+    gap: 20px; /* Spacing between links */
+}
+
+nav a {
+    text-decoration: none; /* Remove underline from links */
+    color: #8c0505; /* Set link text color */
+    font-size: 23px; 
+    font-family: 'Times New Roman', Times, serif;/* Set link text size */
+    font-weight: 500; /* Slightly bold text */
+    transition: color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+nav a:hover {
+    color: #f5f4f1; /* Change link color on hover (gold-like color) */
+    text-decoration:dotted; /* Add underline effect on hover */
+}
+
+/* For responsive design */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column; /* Stack links vertically on smaller screens */
+        gap: 10px; /* Reduce spacing between links */
+    }
+}
+
 /* Container styling */
 .container {
     width: 700px;
@@ -166,9 +197,6 @@ header a{
 
 }
 
-   
-
-
 .containerr{
     width: 700px;
     height:700px ;
@@ -183,7 +211,7 @@ header a{
     
 }
 .containerr h1{
-    margin-top: 250px;
+    margin-top: 200px;
     text-align: center;
     font-size: 36px;
     font-weight: 700;
@@ -232,13 +260,64 @@ header a{
     text-align: center;
     transition: all 0.3s ease;
 }
+#uploaded-image{
+    margin-left: 280px;
+    width: 125px;
+}
 
-#uploaded-image {
-    width: 300px;
-    height: auto; 
-    margin-left: 200px; 
+#generate-button {
+    margin-top: 8px;
+    margin-left: 20px;
     border: 2px solid #8c0505; 
+    font-size: 18px;
+    font-family: 'Times New Roman', Times, serif;
     border-radius: 5px; 
     object-fit: cover; 
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
+    transition: all 0.3s ease;
+    padding: 10px 5px;
 }
+
+.content p{
+    font-size: 25px;
+    font-family: 'Times New Roman', Times, serif;
+    margin-bottom: 20px;
+    color:#8c0505;
+    display: none;
+}
+
+/* Button Container */
+.button-container {
+    display: none;
+    justify-content: center;
+    margin-left: 300px;
+
+}
+
+/* Custom Button Styling */
+.custom-button {
+  
+    width: 200px;
+    padding: 12px 15px;
+    background-color: #8c0505; /* Blue background */
+    color: white;
+    font-size: 16px;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
+    border-radius: 15px;
+    cursor: pointer;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+/* Hover Effect */
+.custom-button:hover {
+    background-color: #8c0505; /* Darker blue */
+    transform: scale(1.1);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+
+
+
