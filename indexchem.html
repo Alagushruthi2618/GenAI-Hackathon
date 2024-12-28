@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Test</title>
+    <link rel="stylesheet" href="stylechem.css">
+</head>
+<body>
+    <a href="#" class="logo">
+        <div class="logo-container">
+            <img src="logo embrace.png" alt="EMBRACE Logo" class="logo-image">
+            <span class="logo-text">EMBRACE</span>
+        </div>
+    </a>
+    <header>
+        
+        <h1>Chemistry Test - Day 1</h1>
+        <p>Answer the following questions</p>
+    </header>
+    <main>
+        <form id="test-form">
+            <!-- Question 1 -->
+            <div class="question">
+                <p>1.Which element has the atomic number 2?</p>
+                <label><input type="radio" name="q1" value="Hydrogen"> Hydrogen</label>
+                <label><input type="radio" name="q1" value="Helium"> Helium</label>
+                <label><input type="radio" name="q1" value="Lithium"> Lithium</label>
+                <label><input type="radio" name="q1" value="Beryllium "> Beryllium </label>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question">
+                <p>2.  Arrange the following elements by their atomic number in ascending order</p>
+                <label><input type="radio" name="q2" value="Lithium, Helium, Boron, Hydrogen">  Lithium, Helium, Boron, Hydrogen
+                </label>
+                <label><input type="radio" name="q2" value="Hydrogen, Helium, Lithium, Boron"> Hydrogen, Helium, Lithium, Boron
+                </label>
+                <label><input type="radio" name="q2" value="Helium, Hydrogen, Lithium, Boron"> Helium, Hydrogen, Lithium, Boron </label>
+                <label><input type="radio" name="q2" value="Hydrogen, Lithium, Helium, Boron"> Hydrogen, Lithium, Helium, Boron</label>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question">
+                <p>3. Which of the following elements is known as the lightest element?</p>
+                <label><input type="radio" name="q3" value="Helium"> Helium</label>
+                <label><input type="radio" name="q3" value="Hydrogen"> Hydrogen</label>
+                <label><input type="radio" name="q3" value="Lithium"> Lithium</label>
+                <label><input type="radio" name="q3" value="Beryilium"> Beryilium</label>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question">
+                <p>4. What is the name of the element with atomic number 5?</p>
+                <label><input type="radio" name="q4" value="Boron"> Boron</label>
+                <label><input type="radio" name="q4" value="Berylium"> Berylium</label>
+                <label><input type="radio" name="q4" value="Lithium"> Lithium</label>
+                <label><input type="radio" name="q4" value=" Helium"> Helium</label>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question">
+                <p>5. What is the chemical symbol for Lithium?</p>
+                <label><input type="radio" name="q5" value="Li"> Li</label>
+                <label><input type="radio" name="q5" value="L"> L</label>
+                <label><input type="radio" name="q5" value="Lm"> Lm</label>
+                <label><input type="radio" name="q5" value="Lt"> Lt</label>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="question">
+                <p>6.Which element's symbol is Be?</p>
+                <label><input type="radio" name="q6" value="Boron"> Boron</label>
+                <label><input type="radio" name="q6" value="Beryllium"> Beryllium</label>
+                <label><input type="radio" name="q6" value="Helium"> Helium</label>
+                <label><input type="radio" name="q6" value="Hydrogen"> Hydrogen</label>
+            </div>
+
+            <button type="button" id="submit-btn">Submit</button>
+        </form>
+        <div id="result" class="hidden"></div>
+            <div class="buttons-container">
+                <button id="home-btn" onclick="window.location.href='index.html';" class="hidden">Go to Home Page</button>
+                <button id="retake-btn" class="hidden">Retake the Test</button>
+                <button id="save-score" class="hidden">Save Score</button>
+            
+    
+            </div>
+    </main>
+    <script src="javachem.js"></script>
+</body>
+</html>
