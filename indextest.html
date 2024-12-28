@@ -1,86 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-
-
 <head>
-    <meta charset="'UTF-8">
+    <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content+"width=device-width, initial-scale=1.0">
-    <title>EMBRACE TEST</title> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMBRACE TEST</title>
     <link rel="stylesheet" href="styletest.css">
-    
-
 </head>
 <body>
     <main class="main">
         <header class="header">
-            <a href="#" class="logo">Quiz</a>
-            
-
-            
+            <a href="#" class="logo">
+                <div class="logo-container">
+                    <img src="logo embrace.png" alt="EMBRACE Logo" class="logo-image">
+                    <span class="logo-text">EMBRACE</span>
+                </div>
+            </a>
         </header>
-        <div class="container">
-            <section class="quiz-section">
-                <div class="quiz-box">
-                    <h1>Intelligence type test</h1>
-                   <!----- <div class="quiz-header">
-                        <span>Test</span>
-                        <span class="header-score">Score:0/5</span>
-                    </div>--->
 
-                    <h2 class="question-text">When you step outside, what do you notice first? </h2>
-                    <div class="option-list">
-                        <div class="option">
-                            <span>A.The plants, animals, or how the environment feels</span>
-                        </div>
-                        <div class="option">
-                            <span>B.The layout of the area, the design of buildings, or the arrangement of objects</span>
-                        </div> 
-                     </div>
-                     <div class="quiz-footer">
+        <div class="container">
+            <section class="home">
+                <div class="home-content">
+                    <h1>What's Your Intelligence Type?</h1>
+                    <br>
+                    
+                    <p>Find out which intelligence comes most naturally to you.
+                        <br>The theory of multiple intelligence was developed<br>
+                         by Harvard psychologist Howard Gardner.
+                         <br>You'll learn about each as you take this quiz!</p>
+                    <br>
+                    <button class="start-btn">Start Quiz</button>
+                </div>
+            </section>
+
+            <section class="quiz-section" style="display: none;">
+                <div class="quiz-box">
+                    
+                    <h2 class="question-text"></h2>
+                    <div class="option-list"></div>
+                    <div class="quiz-footer">
+                        <button class="prev-btn">Previous</button>
                         <span class="question-total">1 of 7 Questions</span>
                         <button class="next-btn">Next</button>
-                     </div>
+                    </div>
                 </div>
+            </section>
 
+            <section class="result" style="display: none;">
+                <div class="result-box">
+                    <h2 class="result-text"></h2>
+                    <br>
+                    <button class="restart-btn">Restart Quiz</button>
+                </div>
             </section>
-            <section class="home">
-               <div class="home-content">
-                    <h1>What's Your Intelligence Type?</h1>
-                    <p> Find out which intelligence comes most naturally to you.The theory of multiple intelligence was developed by Harvard psychologist Howard Gardner.
-                    You'll learn about each as you take this quiz!</p>
-                    <button class="start-btn">Start Quiz</button>
-               </div>
-            </section>
-        </div>    
-    </main>
-    <div class="popup-info">
-        <h2>Instructions</h2>
-        <p>Choose the option that best describes you or what you would enjoy doing the most
-        </p>
-        <div class="btn-group">
-            <button class="instr-btn exit-btn">Exit Quiz</button>
-            <a href="#" class="instr-btn continue-btn">Continue</a>
         </div>
-    </div>
-    <script src="questions.js"></script>
+    </main>
+
     <script src="scripttest.js"></script>
-
-
+    <script src="questions.js"></script>
 </body>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  </html>
+</html>
