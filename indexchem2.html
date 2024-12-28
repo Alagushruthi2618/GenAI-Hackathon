@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Test</title>
+    <link rel="stylesheet" href="stylechem2.css">
+</head>
+<body>
+    <a href="#" class="logo">
+        <div class="logo-container">
+            <img src="logo embrace.png" alt="EMBRACE Logo" class="logo-image">
+            <span class="logo-text">EMBRACE</span>
+        </div>
+    </a>
+    <header>
+        
+        <h1>Chemistry Test - Day 2</h1>
+        <p>Answer the following questions</p>
+    </header>
+    <main>
+        <form id="test-form">
+            <!-- Question 1 -->
+            <div class="question">
+                <p>1.Which element has the atomic number 7?</p>
+                <label><input type="radio" name="q1" value="Carbon"> Carbon</label>
+                <label><input type="radio" name="q1" value="Nitrogen"> Nitrogen</label>
+                <label><input type="radio" name="q1" value="Oxygen"> Oxygen</label>
+                <label><input type="radio" name="q1" value="Neon "> Neon </label>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question">
+                <p>2.  Arrange the following elements by their atomic number in ascending order</p>
+                <label><input type="radio" name="q2" value="Oxygen, Neon, Carbon, Fluorine"> Oxygen, Neon, Carbon, Fluorine
+
+                </label>
+                <label><input type="radio" name="q2" value="Carbon, Nitrogen, Oxygen, Fluorine"> Carbon, Nitrogen, Oxygen, Fluorine</label>
+                <label><input type="radio" name="q2" value="Carbon, Fluorine, Oxygen, Neon"> Carbon, Fluorine, Oxygen, Neon
+                </label>
+                <label><input type="radio" name="q2" value="Nitrogen, Carbon, Neon, Oxygen"> Nitrogen, Carbon, Neon, Oxygen
+                </label>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question">
+                <p>3.What is the name of the element with atomic number 8?
+                </p>
+                <label><input type="radio" name="q3" value="Fluorine">  Fluorine</label>
+                <label><input type="radio" name="q3" value="Hydrogen">  Carbon</label>
+                <label><input type="radio" name="q3" value="Lithium"> Oxygen</label>
+                <label><input type="radio" name="q3" value="Beryilium"> Neon</label>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question">
+                <p>4. Which element is essential for the formation of diamonds?</p>
+                <label><input type="radio" name="q4" value="Carbon"> Carbon</label>
+                <label><input type="radio" name="q4" value=" Fluorine"> Fluorine</label>
+                <label><input type="radio" name="q4" value="Lithium"> Neon</label>
+                <label><input type="radio" name="q4" value=" Helium"> Nitrogen</label>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question">
+                <p>5.What is the chemical symbol for Fluorine?</p>
+                <label><input type="radio" name="q5" value="F"> F
+                    
+                    </label>
+                <label><input type="radio" name="q5" value="Fl"> Fl</label>
+                <label><input type="radio" name="q5" value=" Fn">  Fn</label>
+                <label><input type="radio" name="q5" value="Fr"> Fr</label>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="question">
+                <p>6.Which element's symbol is Ne?</p>
+                <label><input type="radio" name="q6" value=" Nitrogen"> Nitrogen</label>
+                <label><input type="radio" name="q6" value="Neon"> Neon</label>
+                <label><input type="radio" name="q6" value="Fluorine"> Fluorine</label>
+                <label><input type="radio" name="q6" value="Oxygen"> Oxygen</label>
+            </div>
+
+            <button type="button" id="submit-btn">Submit</button>
+        </form>
+        <div id="result" class="hidden"></div>
+            <div class="buttons-container">
+                <button id="home-btn" onclick="window.location.href='index.html';" class="hidden">Go to Home Page</button>
+                <button id="retake-btn" class="hidden">Retake the Test</button>
+                <button id="save-score" class="hidden">Save Score</button>
+            
+    
+            </div>
+    </main>
+    <script src="scriptchem.js"></script>
+</body>
+</html>
