@@ -5,14 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EMBRACE TEST</title>
-    <link rel="stylesheet" href="styletest.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styletest.css') }}">
 </head>
 <body>
     <main class="main">
         <header class="header">
             <a href="#" class="logo">
                 <div class="logo-container">
-                    <img src="logo embrace.png" alt="EMBRACE Logo" class="logo-image">
+                    <img src="{{ url_for('static', filename='logo embrace.png') }}" alt="EMBRACE Logo" class="logo-image">
                     <span class="logo-text">EMBRACE</span>
                 </div>
             </a>
@@ -56,7 +56,7 @@
         </div>
     </main>
 
-    <script src="scripttest.js"></script>
-    <script src="questions.js"></script>
+    <script src="{{ url_for('static', filename='scripttest.js') }}"></script>
+    <script src="{{ url_for('static', filename='questions.js') }}"></script>
 </body>
 </html>
