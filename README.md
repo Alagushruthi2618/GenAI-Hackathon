@@ -12,6 +12,7 @@
 
 
 **Setup instructions (step-by-step)**
+The process of viewing the website begins with downloading the HTML, CSS, and JavaScript files. Each file must be appropriately named and saved with its respective extension: .html for the HTML file, .css for the CSS file, and .js for the JavaScript file. Additionally, all necessary image assets required for the website should be downloaded and stored in the same folder as the other files. All components, including the index.html file, .css file, .js file, and image files, should be placed in a single directory for proper organization. To view the website, the index.html file can be opened using a web browser, such as Google Chrome, to render the interface as intended. Alternatively, the project directory can be opened in a code editor, such as Visual Studio Code, to review and edit the code structure. This approach ensures efficient organization and accessibility of project files, thereby facilitating both development and deployment workflows.
 
 
 **Dependencies list**
