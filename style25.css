@@ -1,3 +1,4 @@
+
 *{
     margin: 0;
     padding: 0;
@@ -321,3 +322,40 @@ nav a:hover {
 
 
 
+.input-groupp select {
+    margin-left: 20px;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 20px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    color: #8c0505;
+    background: #fff;
+    width: 300px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.input-groupp select:hover {
+    background-color: #f8f8f8;
+}
+
+.input-groupp select:focus {
+    box-shadow: 0 0 5px rgba(140, 5, 5, 0.3);
+}
+
+/* Style for the options within the dropdown */
+.input-groupp select option {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 18px;
+    padding: 10px;
+    color: #8c0505;
+    background: #fff;
+}
+
+/* Style for the selected option */
+.input-groupp select option:checked {
+    background: #f8f8f8;
+}
