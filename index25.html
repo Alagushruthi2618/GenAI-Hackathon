@@ -4,103 +4,96 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EMBRACE</title>
-  <link rel="stylesheet" href="style25.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style25.css') }}">
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 <body>
-    <main class="main">
-        <header class="header">
-        
-            <a href="#" class="logo">
-                <div class="logo-container">
-                    <img src="logo embrace.png" alt="EMBRACE Logo" class="logo-image">
-                    <span class="logo-text">EMBRACE</span>
-                </div>
-            </a>
-            <nav>
-                <a href="">Home</a>
-                <a href="">Student </a>
-                <a href="">History </a>
-                    
-                   
-            </nav>
-                
-            
+  <main class="main">
+    <header class="header">
+      <a href="#" class="logo">
+        <div class="logo-container">
+          <img src="{{ url_for('static', filename='logo embrace.png') }}" alt="EMBRACE Logo" class="logo-image">
+          <span class="logo-text">EMBRACE</span>
+        </div>
+      </a>
+      <nav>
+        <a href="">Home</a>
+        <a href="">Student</a>
+        <a href="">History</a>
+      </nav>
+    </header>
 
-            
-        </header>
-        
     <div class="container">
-            <h1>Choose the subject</h1>
-            <h2 class="container-text"></h2>
-            <div class="input-group">
-                <i class='bx bx-book'></i>
-                <select name="text" id="subject" required>
-                    <option value="" disabled selected>Select subject</option>
-                    <option value="Chemistry">Chemistry</option>
-                    <option value="others">Others</option>
-                </select>
-            </div>
-        </div>
-        
-        <div class="container" id="date-container" style="display: none;">
-            <h1>Choose the date</h1>
-            <h2 class="container-text"></h2>
-            <div class="input-group">
-                <i class='bx bx-calendar'></i> <!-- Calendar icon -->
-                <input type="date" id="date" name="date" required>
-                <select name="text" id="subject" required>
-                    <option value="" disabled selected>Select Day</option>
-                    <option value="Day 1">Day 1</option>
-                    <option value="Day 2">Day 2</option>
-                    
-                  </select>
-            </div>
-        </div>
-       
-        
-        
-            
-        <div class="containerr" id="upload-container" style="display: none;">
-            <h1>Upload study materials</h1>
-            <p1>Please upload your study materials here,
-                 <br>and I'll create a comic based on the notes for a joyful learning experience!</p1>
-            <h2 class="container-textt"></h2>
-            <div class="input-groupp">
-                <i class='bx bx-image'></i> <!-- Image icon -->
-                <input type="file" id="image-upload" name="image" accept="image/*">
-            </div>
-            <img id="uploaded-image" style="display: none; max-width: 100%; margin-top: 10px;" alt="Uploaded Image">
-            <button id="generate-button" >Generate</button>
-        </div>
-        
-        
-        
-        
-     
-            <section class="content">
-              <p>Now that you have learnt something exciting, time to test your knowledge</p>
-            </section>
-            <div class="button-container">
-              <div class="custom-button">
-                START TEST
-              </div>
-            </div>
-            <br>
-            <br>
-            <br>
-            <br>
-            
-            <br>
-          
-        
-                
+      <h1>Choose the subject</h1>
+      <h2 class="container-text"></h2>
+      <div class="input-group">
+        <i class='bx bx-book'></i>
+        <select name="text" id="subject" required>
+          <option value="" disabled selected>Select subject</option>
+          <option value="Chemistry">Chemistry</option>
+          <option value="others">Others</option>
+        </select>
+      </div>
+    </div>
 
+    <div class="container" id="date-container" style="display: none;">
+      <h1>Choose the date</h1>
+      <h2 class="container-text"></h2>
+      <div class="input-group">
+        <i class='bx bx-calendar'></i>
+        <input type="date" id="date" name="date" required>
+        <select name="text" id="day" required>
+          <option value="" disabled selected>Select Day</option>
+          <option value="Day 1">Day 1</option>
+          <option value="Day 2">Day 2</option>
+        </select>
+      </div>
+    </div>
 
+    <div class="containerr" id="upload-container" style="display: none;">
+      <h1>Upload study materials</h1>
+      <p>Please upload your study materials here,<br>and I'll create a comic based on the notes for a joyful learning experience!</p>
+      <h2 class="container-textt"></h2>
+      <div class="input-groupp">
+        <i class='bx bx-image'></i>
+        <input type="file" id="image-upload" name="image" accept="image/*">
+      </div>
+      <img id="uploaded-image" style="display: none; max-width: 100%; margin-top: 10px;" alt="Uploaded Image">
+      <button id="generate-button">Generate</button>
+    </div>
 
+    <section class="content">
+      <p>Now that you have learnt something exciting, time to test your knowledge</p>
+    </section>
 
+    <div class="button-container">
+      <div class="custom-button">
+        START TEST
+      </div>
+    </div>
 
+    <script>
+      // JavaScript to toggle date and upload container visibility
+      document.getElementById('subject').addEventListener('change', function() {
+        const dateContainer = document.getElementById('date-container');
+        const uploadContainer = document.getElementById('upload-container');
+        if (this.value) {
+          dateContainer.style.display = 'block';
+        } else {
+          dateContainer.style.display = 'none';
+          uploadContainer.style.display = 'none';
+        }
+      });
 
- <script src="script25.js"></script>
-</body>  
-</html>  
+      document.getElementById('date').addEventListener('change', function() {
+        const uploadContainer = document.getElementById('upload-container');
+        if (this.value) {
+          uploadContainer.style.display = 'block';
+        } else {
+          uploadContainer.style.display = 'none';
+        }
+      });
+    </script>
+  </main>
+</body>
+</html>
