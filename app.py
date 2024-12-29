@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_mysqldb import MySQL
-from werkzeug.security import generate_password_hash, check_password_hash, secure_filename
+from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
 import google.generativeai as genai
@@ -12,6 +12,7 @@ from langchain.chains import RetrievalQA
 from langchain import PromptTemplate
 from huggingface_hub import InferenceClient
 import PIL.Image
+import warnings
 
 # Initialize Flask application
 app = Flask(__name__)
@@ -36,8 +37,8 @@ app.secret_key = 'your_secret_key_here'
 mysql = MySQL(app)
 
 # Configure API keys
-GOOGLE_API_KEY = 'your_google_api_key'
-HUGGINGFACE_TOKEN = 'your_huggingface_token'
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
+HUGGINGFACE_TOKEN = os.getenv('HUGGINGFACE_TOKEN')
 
 # Initialize Hugging Face client
 client = InferenceClient("black-forest-labs/FLUX.1-dev", token=HUGGINGFACE_TOKEN)
@@ -48,6 +49,8 @@ genai.configure(api_key=GOOGLE_API_KEY)
 # Ensure upload directories exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(COMIC_FOLDER, exist_ok=True)
+
+warnings.filterwarnings("ignore")
 
 def save_file(file):
     """Helper function to save uploaded files"""
@@ -359,38 +362,6 @@ def view_material(material_id):
         return redirect(url_for('dashboard'))
 
     return render_template('view_material.html', material=material)
-
-@app.route('/chemistry_test')
-def chemistry_test():
-    """Route to display the chemistry test"""
-    if 'user_id' not in session:
-        flash('Please login first', 'danger')
-        return redirect(url_for('index'))
-    return render_template('indexchem.html')
-
-@app.route('/save_chemistry_test', methods=['POST'])
-def save_chemistry_test():
-    """Save the chemistry test results"""
-    if 'user_id' not in session:
-        return redirect(url_for('index'))
-
-    score = request.form.get('score')
-
-    try:
-        cur = mysql.connection.cursor()
-        cur.execute('''
-            INSERT INTO chemistry_test_results (user_id, score)
-            VALUES (%s, %s)
-        ''', (session['user_id'], score))
-
-        mysql.connection.commit()
-        cur.close()
-
-        flash('Test results saved successfully!', 'success')
-        return redirect(url_for('view_results'))
-    except Exception as e:
-        flash(f'Error saving results: {str(e)}', 'danger')
-        return redirect(url_for('chemistry_test'))
 
 if __name__ == '__main__':
     app.run(debug=True)
