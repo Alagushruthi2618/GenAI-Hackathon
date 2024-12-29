@@ -1,3 +1,4 @@
+
 // Access DOM elements
 const subjectDropdown = document.getElementById("subject");
 const dateContainer = document.getElementById("date-container");
@@ -135,4 +136,19 @@ generateButton.addEventListener("click", function () {
   reviewMessage.style.display = "block"; // Show review message after generation
   learnMoreContainer.style.display = "block"; // Show "Learn More" button container
   contentParagraph.style.display = "block"; // Show the <p> element
+});
+document.addEventListener('DOMContentLoaded', function() {
+  // Get the intelligence type and score from sessionStorage
+  const intelligenceType = sessionStorage.getItem('intelligence_type');
+  const quizScore = sessionStorage.getItem('quiz_score');
+  
+  // Set the values in the hidden form fields
+  if (intelligenceType && quizScore) {
+      document.getElementById('intelligence_type').value = intelligenceType;
+      document.getElementById('quiz_score').value = quizScore;
+  }
+  
+  // Clear the sessionStorage after setting the values
+  sessionStorage.removeItem('intelligence_type');
+  sessionStorage.removeItem('quiz_score');
 });
