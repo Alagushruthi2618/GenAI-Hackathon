@@ -275,13 +275,25 @@ You should see (venv) at the beginning of your terminal prompt, indicating that 
    Make sure your virtual environment is activated before running the application.
 
 **Dependencies list**
+Flask
+Flask-SQLAlchemy
+werkzeug
+langchain
+langchain-community
+langchain-google-genai
+pypdf
+chromadb
+transformers
+pillow
+Install the dependencies using pip:
 
 
 **Usage Examples**
+![WhatsApp Image 2024-12-29 at 17 30 38_3e4a48c7](https://github.com/user-attachments/assets/cafac6b9-4037-4eee-87c5-f57581da6fe7)
 
 
 **Screenshots or GIFs of the app in action**
-
+was unable to paste during submition faced technical glitch
 
 **Team member details**
 
