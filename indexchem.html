@@ -80,7 +80,7 @@
         </form>
         <div id="result" class="hidden"></div>
             <div class="buttons-container">
-                <button id="home-btn" onclick="window.location.href='index.html';" class="hidden">Go to Home Page</button>
+                <a href="{{ url_for('dashboard') }}" class="button" id="home-btn">Go to Home</a>
                 <button id="retake-btn" class="hidden">Retake the Test</button>
                 <button id="save-score" class="hidden">Save Score</button>
             
