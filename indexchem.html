@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chemistry Test</title>
-    <link rel="stylesheet" href="stylechem.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylechem.css') }}">
 </head>
 <body>
     <a href="#" class="logo">
         <div class="logo-container">
-            <img src="logo embrace.png" alt="EMBRACE Logo" class="logo-image">
+            <img src="{{ url_for('static', filename='logo embrace.png') }}" alt="EMBRACE Logo" class="logo-image">
             <span class="logo-text">EMBRACE</span>
         </div>
     </a>
@@ -87,6 +87,6 @@
     
             </div>
     </main>
-    <script src="javachem.js"></script>
+    <script src="{{ url_for('static', filename='javachem.js') }}"></script>
 </body>
 </html>
