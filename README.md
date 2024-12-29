@@ -270,7 +270,9 @@ You should see (venv) at the beginning of your terminal prompt, indicating that 
 1. Now that the dependencies are installed, you can run your application. For example, if you’re using Flask, you can start your Flask application with:
    bash
    flask run
-   
+
+**THIS IS THE LINK TO LLM
+https://colab.research.google.com/drive/1WNsjSZUoXVYJq6bH0FCQxaGNVJKBAaW-?usp=sharing**
 
    Make sure your virtual environment is activated before running the application.
 
