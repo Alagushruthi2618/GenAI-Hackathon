@@ -1,367 +1,334 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
-from flask_mysqldb import MySQL
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, send_file
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
-import google.generativeai as genai
-from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+from PIL import Image, ImageDraw, ImageFont
+import textwrap
+import warnings
 from langchain.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from langchain import PromptTemplate
-from huggingface_hub import InferenceClient
-import PIL.Image
-import warnings
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 
-# Initialize Flask application
 app = Flask(__name__)
-
-# Configure MySQL connection
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'embrace_db'
-app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-
-# Configure upload folders
-UPLOAD_FOLDER = 'static/uploads'
-COMIC_FOLDER = 'static/comics'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['COMIC_FOLDER'] = COMIC_FOLDER
-
-# Secret key for session management
 app.secret_key = 'your_secret_key_here'
 
-# Initialize MySQL
-mysql = MySQL(app)
+# Database Configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///quiz_app.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
-# Configure API keys
-GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
-HUGGINGFACE_TOKEN = os.getenv('HUGGINGFACE_TOKEN')
+# Configure upload folder
+UPLOAD_FOLDER = 'static/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Initialize Hugging Face client
-client = InferenceClient("black-forest-labs/FLUX.1-dev", token=HUGGINGFACE_TOKEN)
+# Ensure upload directory exists
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Configure Google AI
-genai.configure(api_key=GOOGLE_API_KEY)
+# Database Models
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    first_name = db.Column(db.String(80), nullable=False)
+    last_name = db.Column(db.String(80), nullable=False)
+    profile_image = db.Column(db.String(120), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    quiz_results = db.relationship('QuizResult', backref='user', lazy=True)
+    study_materials = db.relationship('StudyMaterial', backref='user', lazy=True)
 
-# Ensure upload directories exist
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(COMIC_FOLDER, exist_ok=True)
+class QuizResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    intelligence_type = db.Column(db.String(50), nullable=False)
+    quiz_score = db.Column(db.Float, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-warnings.filterwarnings("ignore")
+class StudyMaterial(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    subject = db.Column(db.String(50), nullable=False)
+    study_date = db.Column(db.Date, nullable=False)
+    day_number = db.Column(db.String(20), nullable=False)
+    image_data = db.Column(db.LargeBinary, nullable=False)
+    filename = db.Column(db.String(120), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-def save_file(file):
-    """Helper function to save uploaded files"""
-    if file:
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        filename = f"{timestamp}_{secure_filename(file.filename)}"
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(file_path)
-        return filename, file_path
-    return None, None
+# Create database tables
+with app.app_context():
+    db.create_all()
 
-def get_user_details(user_id):
-    """Fetch user details and intelligence type from database"""
-    cur = mysql.connection.cursor()
-    cur.execute('''
-        SELECT u.gender, tr.intelligence_type 
-        FROM users u 
-        LEFT JOIN test_results tr ON u.id = tr.user_id 
-        WHERE u.id = %s 
-        ORDER BY tr.test_date DESC 
-        LIMIT 1
-    ''', (user_id,))
-    result = cur.fetchone()
-    cur.close()
-    return result
+# Helper function to check allowed file extensions
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/')
 def index():
-    """Route for the main login/registration page"""
-    if 'user_id' in session:
-        return redirect(url_for('intelligence_test'))
-    return render_template('index242.html')  # Your login page template
+    if 'username' in session:
+        return redirect(url_for('dashboard'))
+    return render_template('index242.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        user = User.query.filter_by(username=username).first()
+        
+        if user and check_password_hash(user.password, password):
+            session['username'] = username
+            session['user_id'] = user.id
+            flash('Successfully logged in!', 'success')
+            return redirect(url_for('quiz'))
+        else:
+            flash('Invalid username or password!', 'danger')
+            return redirect(url_for('index'))
+    return redirect(url_for('index'))
 
 @app.route('/register', methods=['POST'])
 def register():
-    """Handle user registration"""
-    if request.method == 'POST':
-        try:
-            # Get form data
-            fname = request.form['fName']
-            lname = request.form['lName']
-            age = request.form['age']
-            user_class = request.form['class']
-            gender = request.form['gender']
-            email = request.form['email']
-            username = request.form['username']
-            password = request.form['password']
-            
-            # Handle file uploads
-            profile_image = request.files['profileImage']
-            full_image = request.files['fullImage']
-            
-            # Save images and get filenames
-            profile_image_filename, _ = save_file(profile_image)
-            full_image_filename, _ = save_file(full_image) if full_image else (None, None)
-            
-            cur = mysql.connection.cursor()
-            
-            # Check if username already exists
-            cur.execute('SELECT * FROM users WHERE username = %s', (username,))
-            user = cur.fetchone()
-            
-            if user:
-                flash('Username already exists!', 'danger')
-                return redirect(url_for('index'))
-            
-            # Hash the password
-            hashed_password = generate_password_hash(password)
-            
-            # Insert user data into database
-            cur.execute('''
-                INSERT INTO users 
-                (first_name, last_name, age, class, gender, email, username, password, 
-                profile_image, full_image) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            ''', (fname, lname, age, user_class, gender, email, username, 
-                  hashed_password, profile_image_filename, full_image_filename))
-            
-            mysql.connection.commit()
-            cur.close()
-            
-            flash('Registration successful! Please login.', 'success')
-            return redirect(url_for('index'))
-            
-        except Exception as e:
-            flash(f'An error occurred during registration: {str(e)}', 'danger')
-            return redirect(url_for('index'))
-
-@app.route('/login', methods=['POST'])
-def login():
-    """Handle user login"""
     if request.method == 'POST':
         username = request.form['username']
-        password_candidate = request.form['password']
         
-        cur = mysql.connection.cursor()
-        cur.execute('SELECT * FROM users WHERE username = %s', (username,))
-        user = cur.fetchone()
-        
-        if user:
-            if check_password_hash(user['password'], password_candidate):
-                # Set up user session
-                session['user_id'] = user['id']
-                session['username'] = user['username']
-                
-                flash('Successfully logged in!', 'success')
-                return redirect(url_for('intelligence_test'))
-            else:
-                flash('Invalid password', 'danger')
-                return redirect(url_for('index'))
-        else:
-            flash('Username not found', 'danger')
+        if User.query.filter_by(username=username).first():
+            flash('Username already exists!', 'danger')
             return redirect(url_for('index'))
         
-        cur.close()
-
-@app.route('/intelligence_test')
-def intelligence_test():
-    """Route for the intelligence test page"""
-    if 'user_id' not in session:
-        flash('Please login first', 'danger')
+        # Handle profile image upload
+        profile_image = request.files['profileImage']
+        if profile_image and allowed_file(profile_image.filename):
+            filename = secure_filename(profile_image.filename)
+            profile_image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        else:
+            flash('Invalid image format!', 'danger')
+            return redirect(url_for('index'))
+        
+        # Create new user
+        new_user = User(
+            username=username,
+            password=generate_password_hash(request.form['password']),
+            email=request.form['email'],
+            first_name=request.form['fName'],
+            last_name=request.form['lName'],
+            profile_image=filename
+        )
+        
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            flash('Registration successful! Please login.', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash('Registration failed! Please try again.', 'danger')
+            
         return redirect(url_for('index'))
-    return render_template('indextest.html')  # Using your test page template
+
+@app.route('/quiz')
+def quiz():
+    if 'username' not in session:
+        return redirect(url_for('index'))
+    return render_template('indextest.html')
 
 @app.route('/save_result', methods=['POST'])
 def save_result():
-    """Save the intelligence test results"""
-    if 'user_id' not in session:
+    if 'username' not in session or 'user_id' not in session:
         return redirect(url_for('index'))
     
     intelligence_type = request.form.get('intelligence_type')
     quiz_score = request.form.get('quiz_score')
     
+    # Store quiz results
+    new_result = QuizResult(
+        user_id=session['user_id'],
+        intelligence_type=intelligence_type,
+        quiz_score=float(quiz_score)
+    )
+    
     try:
-        cur = mysql.connection.cursor()
-        cur.execute('''
-            INSERT INTO test_results (user_id, intelligence_type, quiz_score)
-            VALUES (%s, %s, %s)
-        ''', (session['user_id'], intelligence_type, quiz_score))
-        
-        mysql.connection.commit()
-        cur.close()
-        
-        flash('Test results saved successfully!', 'success')
-        return redirect(url_for('view_results'))
+        db.session.add(new_result)
+        db.session.commit()
+        flash('Quiz results saved successfully!', 'success')
     except Exception as e:
-        flash(f'Error saving results: {str(e)}', 'danger')
-        return redirect(url_for('intelligence_test'))
-
-@app.route('/view_results')
-def view_results():
-    """View test results"""
-    if 'user_id' not in session:
-        return redirect(url_for('index'))
+        db.session.rollback()
+        flash('Failed to save quiz results!', 'danger')
     
-    cur = mysql.connection.cursor()
-    cur.execute('''
-        SELECT tr.*, u.username 
-        FROM test_results tr 
-        JOIN users u ON tr.user_id = u.id 
-        WHERE tr.user_id = %s 
-        ORDER BY tr.test_date DESC
-    ''', (session['user_id'],))
-    
-    results = cur.fetchall()
-    cur.close()
-    
-    return render_template('results.html', results=results)
+    return redirect(url_for('dashboard'))
 
 @app.route('/dashboard')
 def dashboard():
-    """Route for the subject selection dashboard"""
-    if 'user_id' not in session:
-        flash('Please login first', 'danger')
+    if 'username' not in session:
         return redirect(url_for('index'))
     return render_template('index25.html')
 
-@app.route('/process_material', methods=['POST'])
-def process_material_route():
-    """Handle study material processing and comic generation"""
-    if 'user_id' not in session:
-        return jsonify({'error': 'Please login first'}), 401
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    session.pop('user_id', None)
+    flash('Successfully logged out!', 'success')
+    return redirect(url_for('index'))
 
+@app.route('/results')
+def results():
+    if 'username' not in session or 'user_id' not in session:
+        return redirect(url_for('index'))
+    
+    # Get the latest quiz result for the user
+    latest_result = QuizResult.query.filter_by(user_id=session['user_id']).order_by(QuizResult.created_at.desc()).first()
+    
+    if (latest_result):
+        return render_template('results.html',
+                             intelligence_type=latest_result.intelligence_type,
+                             quiz_score=latest_result.quiz_score,
+                             subject="General Knowledge")
+    return redirect(url_for('quiz'))
+
+@app.route('/upload_material', methods=['POST'])
+def upload_material():
+    if 'username' not in session or 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'User not logged in'})
+    
     try:
-        # Get file and subject
-        if 'material' not in request.files:
-            return jsonify({'error': 'No file uploaded'}), 400
-        
-        file = request.files['material']
-        subject = request.form.get('subject')
-        selected_date = request.form.get('date')
-        selected_day = request.form.get('day')
-        
-        if not all([file, subject, selected_date, selected_day]):
-            return jsonify({'error': 'Missing required fields'}), 400
-
-        # Save file
-        filename, file_path = save_file(file)
-        if not filename:
-            return jsonify({'error': 'Error saving file'}), 500
-
-        # Get user details
-        user_details = get_user_details(session['user_id'])
-        if not user_details:
-            return jsonify({'error': 'User details not found'}), 404
-
-        # Load and process document
-        pdf_loader = PyPDFLoader(file_path)
-        pages = pdf_loader.load_and_split()
-        
-        # Extract text content
-        text_content = "\n".join(page.page_content for page in pages)
-        
-        # Create text splitter
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=1000)
-        texts = text_splitter.split_text(text_content)
-        
-        # Initialize Gemini model
-        model = ChatGoogleGenerativeAI(
-            model="gemini-1.5-flash",
-            google_api_key=GOOGLE_API_KEY,
-            temperature=0.2,
-            convert_system_message_to_human=True
-        )
-        
-        # Create embeddings and vector store
-        embeddings = GoogleGenerativeAIEmbeddings(
-            model="models/embedding-001",
-            google_api_key=GOOGLE_API_KEY
-        )
-        vector_index = Chroma.from_texts(texts, embeddings).as_retriever(search_kwargs={"k": 5})
-        
-        # Create conversation template
-        template = f"""Generate a conversation between a student and a Teacher discussing about the elements 
-        from the study material, specifically tailored for a {user_details['gender']} student with 
-        {user_details['intelligence_type']} intelligence. Ensure the dialogue is informative, engaging, 
-        and uses examples that resonate with {user_details['intelligence_type']} learners.
-        
-        The conversation should contain 6 exchanges, with each exchange containing 1 line of dialogue.
-        Make sure the characters are distinct in their personalities and the student asks questions respectfully.
-        
-        Here's the context: {{context}}
-        """
-        
-        qa_chain_prompt = PromptTemplate.from_template(template)
-        
-        # Create QA chain
-        qa_chain = RetrievalQA.from_chain_type(
-            model,
-            retriever=vector_index,
-            return_source_documents=True,
-            chain_type_kwargs={"prompt": qa_chain_prompt}
-        )
-        
-        # Generate conversation
-        result = qa_chain({"query": f"Explain the main concepts in this {subject} material"})
-        
-        # Generate comic image using Hugging Face
-        text_prompt = f"""
-        Generate a comic like image having 4 sections with a theme learning {subject} with {user_details['intelligence_type']} intelligence. 
-        Each section should include a {user_details['gender']} student, age 14, learning and engaging with different {subject} related objects. 
-        Do not include any text or callouts in the sections.
-        """
-        
-        comic_image = client.text_to_image(text_prompt)
-        
-        # Save comic image
-        comic_filename = f"comic_{session['user_id']}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
-        comic_path = os.path.join(app.config['COMIC_FOLDER'], comic_filename)
-        comic_image.save(comic_path)
-        
-        # Save to database
-        cur = mysql.connection.cursor()
-        cur.execute('''
-            INSERT INTO study_materials 
-            (user_id, subject, study_date, day, filename, conversation, comic_image)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-        ''', (session['user_id'], subject, selected_date, selected_day, 
-              filename, result['result'], comic_filename))
-        
-        mysql.connection.commit()
-        cur.close()
-        
-        return jsonify({
-            'success': True,
-            'conversation': result['result'],
-            'comic_image': url_for('static', filename=f'comics/{comic_filename}')
-        })
-        
+        file = request.files['image']
+        if file and allowed_file(file.filename):
+            # Read file data
+            file_data = file.read()
+            filename = secure_filename(file.filename)
+            
+            # Create new study material record
+            new_material = StudyMaterial(
+                user_id=session['user_id'],
+                subject=request.form['subject'],
+                study_date=datetime.strptime(request.form['date'], '%Y-%m-%d').date(),
+                day_number=request.form['day'],
+                image_data=file_data,
+                filename=filename
+            )
+            
+            db.session.add(new_material)
+            db.session.commit()
+            
+            return jsonify({'success': True, 'message': 'Material uploaded successfully'})
+        else:
+            return jsonify({'success': False, 'message': 'Invalid file type'})
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)})
 
-@app.route('/view_material/<int:material_id>')
-def view_material(material_id):
-    """View generated study material"""
+@app.route('/start_test', methods=['POST'])
+def start_test():
+    return redirect(url_for('chem_test_day1'))
+
+@app.route('/chem_test_day1')
+def chem_test_day1():
     if 'user_id' not in session:
-        return redirect(url_for('login'))
+        return redirect(url_for('index'))
+    return render_template('indexchem.html')
 
-    cur = mysql.connection.cursor()
-    cur.execute('''
-        SELECT * FROM study_materials 
-        WHERE id = %s AND user_id = %s
-    ''', (material_id, session['user_id']))
-    material = cur.fetchone()
-    cur.close()
+@app.route('/index25')
+def index25():
+    return render_template('index25.html')
 
-    if not material:
-        flash('Material not found', 'error')
-        return redirect(url_for('dashboard'))
+# Endpoint to handle LLM processing and image generation
+@app.route('/generate_images', methods=['POST'])
+def generate_images():
+    question = request.form['question']
+    intelligence_type = request.form['intelligence_type']
 
-    return render_template('view_material.html', material=material)
+    # Initialize the LLM and embeddings
+    GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
+    model = ChatGoogleGenerativeAI(model="gemini-1.5-flash", google_api_key=GOOGLE_API_KEY, temperature=0.2, convert_system_message_to_human=True)
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=GOOGLE_API_KEY)
+
+    # Load and process the PDF document
+    pdf_loader = PyPDFLoader("/path/to/your/document.pdf")  # Change this to your document's path
+    pages = pdf_loader.load_and_split()
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=1000)
+    context = "\n\n".join(str(p.page_content) for p in pages)
+    texts = text_splitter.split_text(context)
+    vector_index = Chroma.from_texts(texts, embeddings).as_retriever(search_kwargs={"k": 5})
+
+    # Define the prompt template and QA chain
+    template = """Generate a conversation between a student and a Teacher named Teacher discussing about the elements with atomic number 6-10 of the periodic table, conversing the topic of [insert specific topic from RAG output here]. The specific topic here include element's atomic number, atomic weight and its state. Also include element's respective atomic number, atomic weight. Ensure that the dialogue is informative, engaging, and free of gender bias. Make sure the characters are distinct in their personalities. Make sure student asks questions respectfully. Highly prioritize that boy can understand only when discussed in naturalistic way.
+    Student: A 9th grade boy named Sajal willing to learn chemistry with Naturalistic intelligence who has the ability to recognize, identify, understand, and work with elements of the natural world. he has a keen sense of observation and excels at spotting relationships and patterns in nature.
+    Teacher: A teacher, renowned for their groundbreaking research, has a passion for sharing knowledge with students. Known for their friendly demeanor and clear communication, they excel at breaking down complex concepts into simple, relatable terms using analogies and practical examples. Their interactive teaching style involves hands-on experiments and engaging demonstrations. Always patient and empathetic, they listen to students' questions and provide thoughtful explanations, making learning accessible and exciting for everyone.
+    The conversation should contain only 6 exchanges, with each exchange containing exactly 1 line of dialogue. Dialogues should be short and have to be understandable by boy with naturalist intelligence. Use the dialogue to highlight key points from the retrieved text in an engaging and respectful manner. Make sure it is being taught to a boy with naturalist intelligence. Dialogues must be able to understand by a boy with naturalistic intelligence.
+
+    Here's some information to help you: {context}
+    """
+    QA_CHAIN_PROMPT = PromptTemplate.from_template(template)
+
+    qa_chain = RetrievalQA.from_chain_type(
+        model,
+        retriever=vector_index,
+        return_source_documents=True,
+        chain_type_kwargs={"prompt": QA_CHAIN_PROMPT}
+    )
+
+    # Generate response
+    result = qa_chain({"query": question})
+
+    # Generate comic conversation
+    conversation = result["result"]
+    exchanges = convert_conversation_to_tuples(conversation)
+    panels = []
+    for character, text in exchanges:
+        panel = draw_exchange(character, text)
+        panels.append(panel)
+
+    total_height = sum(panel.height for panel in panels)
+    max_width = max(panel.width for panel in panels)
+    combined_image = Image.new('RGBA', (max_width, total_height))
+    y_offset = 0
+    for panel in panels:
+        combined_image.paste(panel, (0, y_offset))
+        y_offset += panel.height
+
+    comic_conversation_path = os.path.join(app.config['UPLOAD_FOLDER'], 'comic_conversation.png')
+    combined_image.save(comic_conversation_path)
+
+    # Placeholder for the second image generation
+    second_image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'genimage.png')
+    combined_image.save(second_image_path)  # Replace with actual image generation
+
+    # Combine images
+    image1 = Image.open(comic_conversation_path)
+    image2 = Image.open(second_image_path)
+    total_width = image1.width + image2.width
+    max_height = max(image1.height, image2.height)
+    combined_image = Image.new('RGB', (total_width, max_height))
+    combined_image.paste(image1, (0, 0))
+    combined_image.paste(image2, (image1.width, 0))
+    combined_image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'combined_image.png')
+    combined_image.save(combined_image_path)
+
+    return send_file(combined_image_path, mimetype='image/png')
+
+def convert_conversation_to_tuples(conversation):
+    lines = conversation.split('\n')
+    conversation_tuples = []
+    for line in lines:
+        if line.strip() and ':' in line:  # Check if the line contains ':'
+            speaker, text = line.split(':', 1)
+            conversation_tuples.append((speaker.strip(), text.strip()))
+    return conversation_tuples
+
+def draw_exchange(character, text, image_size=(1800, 200), font_size=40):
+    img = Image.new('RGB', image_size, color=(255, 255, 255))
+    draw = ImageDraw.Draw(img)
+    font_path = "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"
+    font = ImageFont.truetype(font_path, font_size)
+
+    draw.text((10, 10), f"{character}:", fill=(0, 0, 0), font=font)
+    draw.text((10, 50), text, fill=(0, 0, 0), font=font)
+
+    return img
 
 if __name__ == '__main__':
     app.run(debug=True)
