@@ -360,5 +360,37 @@ def view_material(material_id):
 
     return render_template('view_material.html', material=material)
 
+@app.route('/chemistry_test')
+def chemistry_test():
+    """Route to display the chemistry test"""
+    if 'user_id' not in session:
+        flash('Please login first', 'danger')
+        return redirect(url_for('index'))
+    return render_template('indexchem.html')
+
+@app.route('/save_chemistry_test', methods=['POST'])
+def save_chemistry_test():
+    """Save the chemistry test results"""
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+
+    score = request.form.get('score')
+
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute('''
+            INSERT INTO chemistry_test_results (user_id, score)
+            VALUES (%s, %s)
+        ''', (session['user_id'], score))
+
+        mysql.connection.commit()
+        cur.close()
+
+        flash('Test results saved successfully!', 'success')
+        return redirect(url_for('view_results'))
+    except Exception as e:
+        flash(f'Error saving results: {str(e)}', 'danger')
+        return redirect(url_for('chemistry_test'))
+
 if __name__ == '__main__':
     app.run(debug=True)
